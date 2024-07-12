@@ -16,6 +16,7 @@ import com.tujuhsembilan.app.model.talent.talent_request.TalentWishlist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -53,8 +54,8 @@ public class Talent {
   @Column(name = "employee_number", nullable = false)
   private String employeeNumber;
 
-  @Column( name = "gender", nullable = false )
-  private char gender;
+  @Column( name = "gender")
+  private Character gender;
 
   @Column( name = "birth_date", nullable = false )
   private Timestamp birthDate;
@@ -66,7 +67,7 @@ public class Talent {
   private String talentCvFilename;
 
   @Column( name = "experience", nullable = false )
-  private int experience;
+  private Integer experience;
 
   @Column( name = "email", nullable = false )
   private String email;
@@ -112,7 +113,7 @@ public class Talent {
   private String talentPhotoUrl;
 
   @Column(name = "total_project_completed")
-  private int totalProjectCompleted;
+  private Integer totalProjectCompleted;
 
   @ManyToOne
   @JoinColumn(name = "talent_status_id", referencedColumnName = "talent_status_id")
@@ -126,7 +127,7 @@ public class Talent {
   @JoinColumn(name = "talent_level_id", referencedColumnName = "talent_level_id")
   private TalentLevel talentLevel;
 
-  @OneToMany(mappedBy = "talent")
+@OneToMany(mappedBy = "talent", fetch = FetchType.LAZY)
   private Set<TalentPosition> talentPositions;
 
   @OneToMany(mappedBy = "talent")

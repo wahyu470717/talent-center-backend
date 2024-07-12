@@ -1,6 +1,7 @@
 package com.tujuhsembilan.app.model.position;
 
 import java.sql.Timestamp;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +14,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -56,4 +58,7 @@ public class Position {
   @LastModifiedDate
   @Temporal(TemporalType.TIMESTAMP)
   private Timestamp lastModifiedTime;
+
+  @OneToMany(mappedBy = "position")
+  private Set<TalentPosition> talentPositions;
 }

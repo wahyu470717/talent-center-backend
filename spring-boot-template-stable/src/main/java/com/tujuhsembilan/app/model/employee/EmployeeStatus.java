@@ -40,9 +40,6 @@ public class EmployeeStatus {
   @Column(name = "employee_status_name")
   private String employeeStatusName;
   
-  @Column(name = "is_active")
-  private Boolean isActive;
-  
   @Column(name = "created_by")
   private String createdBy;
   

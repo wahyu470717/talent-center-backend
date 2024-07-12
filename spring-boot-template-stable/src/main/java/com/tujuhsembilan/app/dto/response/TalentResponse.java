@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TalentResponse {
-    private int pageNumber;
-    private int pageSize;
-    private long totalElements;
-    private int totalPages;
+    // private int pageNumber;
+    // private int pageSize;
+    // private long totalElements;
+    // private int totalPages;
     private List<TalentDto> data;
 }

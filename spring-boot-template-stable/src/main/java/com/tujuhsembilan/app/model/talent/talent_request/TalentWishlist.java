@@ -7,7 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.tujuhsembilan.app.model.client.Client;
+// import com.tujuhsembilan.app.model.client.Client;
 import com.tujuhsembilan.app.model.talent.Talent;
 
 import jakarta.persistence.Column;
@@ -44,9 +44,10 @@ public class TalentWishlist {
   @JoinColumn(name = "talent_id", referencedColumnName = "talent_id", nullable = false)
   private Talent talent;
 
-  @ManyToOne
-  @JoinColumn(name = "client_id", referencedColumnName = "client_id", nullable = false)
-  private Client client;
+  // @ManyToOne
+  // @JoinColumn(name = "client_id", referencedColumnName = "client_id", nullable = false)
+  @Column(name = "client_id")
+  private UUID client;
 
   @Column(name = "wishlist_date", nullable = false)
   private Timestamp wishlistDate;

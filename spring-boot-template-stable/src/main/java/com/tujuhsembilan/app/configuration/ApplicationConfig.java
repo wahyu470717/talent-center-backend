@@ -116,4 +116,9 @@ public class ApplicationConfig {
             });
   }
 
+  @Bean
+  public DateTimeFormatter dateFormatter() {
+      return DateTimeFormatter.ofPattern("dd MMMM yyyy");
+  }
+
 }

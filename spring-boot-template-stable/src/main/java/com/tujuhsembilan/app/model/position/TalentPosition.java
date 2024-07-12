@@ -1,7 +1,7 @@
 package com.tujuhsembilan.app.model.position;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,9 +12,8 @@ import com.tujuhsembilan.app.model.talent.Talent;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -30,19 +29,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "talent_position")
+@IdClass(TalentPositionId.class)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class TalentPosition {
+public class TalentPosition implements Serializable{
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "talent_position_id", updatable = false, nullable = false)
-  private int talentPositionId;
-
   @ManyToOne
   @JoinColumn(name = "talent_id", referencedColumnName = "talent_id", nullable = false)
   private Talent talent;
 
+  @Id
   @ManyToOne
   @JoinColumn(name = "position_id", referencedColumnName = "position_id", nullable = false)
   private Position position;
