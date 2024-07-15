@@ -13,6 +13,7 @@ import com.tujuhsembilan.app.model.position.TalentPosition;
 import com.tujuhsembilan.app.model.skillset.TalentSkillset;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentWishlist;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -127,12 +128,12 @@ public class Talent {
   @JoinColumn(name = "talent_level_id", referencedColumnName = "talent_level_id")
   private TalentLevel talentLevel;
 
-@OneToMany(mappedBy = "talent", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "talent",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<TalentPosition> talentPositions;
 
-  @OneToMany(mappedBy = "talent")
+  @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<TalentSkillset> talentSkillsets;
 
-  @OneToMany(mappedBy = "talent")
+  @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<TalentWishlist> talentWishlists;
 }

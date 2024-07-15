@@ -1,4 +1,4 @@
-package com.tujuhsembilan.app.dto.response;
+package com.tujuhsembilan.app.dto.response.talent_response;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PositionResponseDto {
+public class PositionResponse {
     private UUID positionId;
     private String positionName;
 }

@@ -20,11 +20,11 @@ import lombok.NoArgsConstructor;
 public class TalentRequestDto {
   private UUID talentId;
   private String talentName;
-  private TalentStatus talentStatus;
-  private EmployeeStatus employeeStatus;
+  private String talentStatus;
+  private String employeeStatus;
   private Boolean talentAvailability;
   private Integer talentExperience;
-  private TalentLevel talentLevel;
+  private String talentLevel;
   private Position position;
   private Skillset skillSet;
 }

@@ -13,44 +13,43 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tujuhsembilan.app.dto.request.PageRequest;
 import com.tujuhsembilan.app.dto.request.TalentRequestDto;
-import com.tujuhsembilan.app.dto.response.TalentDetailResponse;
-import com.tujuhsembilan.app.dto.response.TalentResponse;
 import com.tujuhsembilan.app.dto.response.employee_response.EmployeeStatusResponse;
+import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
+import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
 import com.tujuhsembilan.app.service.EmployeeStatusService;
 import com.tujuhsembilan.app.service.TalentService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/talent-management")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@Slf4j
 public class TalentController {
-  
-  @Autowired
-  private TalentService talentService;
 
-  @Autowired
-  private EmployeeStatusService employeeStatusService;
-  
-  @GetMapping("/talents")
-  public ResponseEntity<TalentResponse> getTalent(
-      @ModelAttribute TalentRequestDto filter, 
-      @ModelAttribute PageRequest pageRequest) {
-      return talentService.getAllTalents(filter, pageRequest);
-  }
+    @Autowired
+    private TalentService talentService;
 
-    @GetMapping("/talents/{talentId}")
-    public ResponseEntity<TalentDetailResponse> getTalentById(@PathVariable UUID talentId) {
-        return talentService.getTalentById(talentId);
+    @Autowired
+    private EmployeeStatusService employeeStatusService;
+
+    // GET_ALL_TALENTS
+    @GetMapping("/talents")
+    public ResponseEntity<List<TalentResponse>> getTalent(
+            @ModelAttribute TalentRequestDto filter,
+            PageRequest pageRequest) {
+        return talentService.getAllTalents(filter, pageRequest);
     }
 
-    //get search data master level talent
+    // GET_DETAIL_TALENTS
+    @GetMapping("/talents/{talentId}")
+    public ResponseEntity<TalentDetailResponse> getTalentById(@PathVariable UUID talentId) {
+        return talentService.getTalentDetailById(talentId);
+    }
+
+    // GET_EMPLOYEE_STATUS
     @GetMapping("/employee-status-option-lists")
     public ResponseEntity<List<EmployeeStatusResponse>> getEmployeeStatusOptions() {
         return employeeStatusService.getAllEmployeeStatus();
     }
-  
+
 }
-  

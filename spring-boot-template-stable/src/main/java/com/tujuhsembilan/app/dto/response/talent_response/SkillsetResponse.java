@@ -1,4 +1,4 @@
-package com.tujuhsembilan.app.dto.response;
+package com.tujuhsembilan.app.dto.response.talent_response;
 
 
 import java.util.UUID;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SkillsetResponseDto {
-  private UUID skillId;
-  private String skillName;
+public class SkillsetResponse {
+  private UUID skillsetId;
+  private String skillsetName;
 }

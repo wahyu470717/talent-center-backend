@@ -1,10 +1,8 @@
-package com.tujuhsembilan.app.dto.response;
+package com.tujuhsembilan.app.dto.response.talent_response;
 
 import java.util.List;
 import java.util.UUID;
 
-import com.tujuhsembilan.app.model.employee.EmployeeStatus;
-import com.tujuhsembilan.app.model.talent.TalentStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +13,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TalentDto {
+public class TalentResponse {
   private UUID talentId;
   private String talentPhotoUrl;
   private String talentName;
-  private TalentStatus talentStatus;
-  private EmployeeStatus employeeStatus;
+  private String employeeStatus;
   private Boolean talentAvailability;
   private Integer talentExperience;
   private String talentLevel;
-  private List<PositionResponseDto> position;
-  private List<SkillsetResponseDto> skillSet; 
+  private String talentStatus;
+  private List<PositionResponse> position;
+  private List<SkillsetResponse> skillSet; 
 }

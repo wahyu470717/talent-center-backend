@@ -3,9 +3,13 @@ package com.tujuhsembilan.app.model.skillset;
 import java.io.Serializable;
 import java.util.UUID;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.tujuhsembilan.app.model.talent.Talent;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -18,12 +22,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
+@EntityListeners(AuditingEntityListener.class)
 public class TalentSkillsetId implements Serializable {
-    @ManyToOne
-    @JoinColumn(name = "talent_id", referencedColumnName = "talent_id")
-    private Talent talentId;
 
-    @ManyToOne
-    @JoinColumn(name = "skillset_id", referencedColumnName = "skillset_id")
-    private Skillset skillsetId;
+    @Column(name = "talent_id")
+    private UUID talentId;
+
+    @Column(name = "skillset_id")
+    private UUID skillsetId;
 }

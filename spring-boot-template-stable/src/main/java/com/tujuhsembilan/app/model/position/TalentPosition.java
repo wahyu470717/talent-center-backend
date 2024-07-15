@@ -7,15 +7,18 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.tujuhsembilan.app.model.skillset.TalentSkillsetId;
 import com.tujuhsembilan.app.model.talent.Talent;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -29,17 +32,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "talent_position")
-@IdClass(TalentPositionId.class)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class TalentPosition implements Serializable{
 
-  @Id
+  @EmbeddedId
+  private TalentPositionId id;
+
+  @MapsId("talendId")
   @ManyToOne
   @JoinColumn(name = "talent_id", referencedColumnName = "talent_id", nullable = false)
   private Talent talent;
 
-  @Id
+  @MapsId("positionId")
   @ManyToOne
   @JoinColumn(name = "position_id", referencedColumnName = "position_id", nullable = false)
   private Position position;

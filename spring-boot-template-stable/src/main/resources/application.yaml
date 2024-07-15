@@ -90,3 +90,13 @@ spring:
 # # -----------------------------------
 # --- #
 # # -----------------------------------
+
+#-----------------------------------
+--- # MinIO Configuration
+#-----------------------------------
+application:
+  minio:
+    url: https://minio.cloudias79.com/
+    username: devtalentcenter
+    password: as4Dx6L4Uf1zFkyy
+    bucketName: talent-center-app

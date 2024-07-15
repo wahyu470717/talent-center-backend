@@ -15,6 +15,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -35,10 +36,12 @@ public class TalentSkillset implements Serializable {
     @EmbeddedId
     private TalentSkillsetId id;
 
+    @MapsId("talentId")
     @ManyToOne
     @JoinColumn(name = "talent_id", referencedColumnName = "talent_id", insertable = false, updatable = false)
     private Talent talent;
 
+    @MapsId("skillsetId")
     @ManyToOne
     @JoinColumn(name = "skillset_id", referencedColumnName = "skillset_id", insertable = false, updatable = false)
     private Skillset skillset;

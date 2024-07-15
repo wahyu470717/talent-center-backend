@@ -13,6 +13,9 @@ import jakarta.persistence.criteria.Predicate;
 public class TalentSpecification {
     public static Specification<Talent> talentFilter(TalentRequestDto talentRequestDto) {
         return (root, query, criteriaBuilder) -> {
+
+            // Join<Talent, TalentPosition> talentPositionJoin = root.join("talentPositions");
+            // Join<TalentPosition, Position> positionJoin = talentPositionJoin.join("position");
             List<Predicate> predicates = new ArrayList<>();
 
             if (talentRequestDto.getTalentId() != null) {

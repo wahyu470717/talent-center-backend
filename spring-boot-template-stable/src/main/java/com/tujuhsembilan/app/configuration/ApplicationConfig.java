@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -62,7 +63,12 @@ public class ApplicationConfig {
 
   @Bean
   public ModelMapper modelMapper() {
-    return new ModelMapper();
+    ModelMapper modelMapper = new ModelMapper();
+
+    // Tambahkan konfigurasi khusus jika diperlukan
+    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+    return modelMapper;
   }
 
   @Bean
