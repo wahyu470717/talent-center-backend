@@ -1,21 +1,15 @@
-package com.tujuhsembilan.app.model.position;
+package com.tujuhsembilan.app.model.talent;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.tujuhsembilan.app.model.talent.Talent;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -28,23 +22,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "talent_position")
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class TalentPosition implements Serializable{
+@Table( name = "talent_metadata")
+public class TalentMetadata {
 
-  @EmbeddedId
-  private TalentPositionId id;
-
-  @MapsId("talendId")
-  @ManyToOne
-  @JoinColumn(name = "talent_id", referencedColumnName = "talent_id", nullable = false)
+  @Id
+  @OneToOne
+  @JoinColumn( name = "talent_id", referencedColumnName = "talent_id", nullable = false)
   private Talent talent;
 
-  @MapsId("positionId")
-  @ManyToOne
-  @JoinColumn(name = "position_id", referencedColumnName = "position_id", nullable = false)
-  private Position position;
+  @Column( name = "cv_counter")
+  private Integer cvCounter;
+
+  @Column( name = "profile_counter")
+  private Integer profileCounter;
+
+  @Column( name = "total_project_completed")
+  private Integer totalProjectCompleted;
 
   @Column(name = "created_by")
   private String createdBy;

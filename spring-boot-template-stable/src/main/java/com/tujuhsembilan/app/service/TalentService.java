@@ -1,5 +1,11 @@
 package com.tujuhsembilan.app.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -7,23 +13,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tujuhsembilan.app.dto.request.PageRequest;
-import com.tujuhsembilan.app.dto.request.TalentRequestDto;
-import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
+import com.tujuhsembilan.app.dto.request.TalentRequest;
 import com.tujuhsembilan.app.dto.response.talent_response.PositionResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.SkillsetResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
+import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
 import com.tujuhsembilan.app.model.talent.Talent;
 import com.tujuhsembilan.app.repository.TalentRepository;
-
-import jakarta.transaction.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @Transactional
@@ -36,7 +35,7 @@ public class TalentService {
 
     // ============================GET ALL TALENT===============================//
 
-    public ResponseEntity<List<TalentResponse>> getAllTalents(TalentRequestDto filter, PageRequest pageRequest) {
+    public ResponseEntity<List<TalentResponse>> getAllTalents(TalentRequest filter, PageRequest pageRequest) {
         Pageable pageable = pageRequest.getPage();
         Page<Object[]> talentData = talentRepository.findAllTalentsWithPositionsAndSkills(pageable);
 
@@ -127,7 +126,6 @@ public class TalentService {
     }
     
     // =======================mapping skillset & position ======================//
-
     private List<PositionResponse> mapPositions(String positionIds, String positionNames) {
         String[] ids = positionIds.split(",");
         String[] names = positionNames.split(",");

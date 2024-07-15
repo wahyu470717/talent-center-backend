@@ -7,12 +7,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tujuhsembilan.app.dto.response.employee_response.EmployeeStatusResponse;
 import com.tujuhsembilan.app.model.employee.EmployeeStatus;
 import com.tujuhsembilan.app.repository.EmployeeStatusRepository;
 
-import jakarta.transaction.Transactional;
 
 @Service
 @Transactional

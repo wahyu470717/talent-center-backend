@@ -5,34 +5,30 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.tujuhsembilan.app.dto.request.TalentRequestDto;
+import com.tujuhsembilan.app.dto.request.TalentRequest;
 import com.tujuhsembilan.app.model.talent.Talent;
 
 import jakarta.persistence.criteria.Predicate;
 
 public class TalentSpecification {
-    public static Specification<Talent> talentFilter(TalentRequestDto talentRequestDto) {
+    public static Specification<Talent> talentFilter(TalentRequest talentRequestDto) {
         return (root, query, criteriaBuilder) -> {
 
             // Join<Talent, TalentPosition> talentPositionJoin = root.join("talentPositions");
             // Join<TalentPosition, Position> positionJoin = talentPositionJoin.join("position");
             List<Predicate> predicates = new ArrayList<>();
 
-            if (talentRequestDto.getTalentId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("talentId"), talentRequestDto.getTalentId()));
-            }
-
             if (talentRequestDto.getTalentName() != null) {
                 String talentNameValue = "%" + talentRequestDto.getTalentName().toLowerCase() + "%";
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("talentName")), talentNameValue));
             }
 
-            if (talentRequestDto.getTalentStatus() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("talentStatus"), talentRequestDto.getTalentStatus()));
+            if (talentRequestDto.getTalentStatusId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("talentStatus"), talentRequestDto.getTalentStatusId()));
             }
 
-            if (talentRequestDto.getEmployeeStatus() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("employeeStatus"), talentRequestDto.getEmployeeStatus()));
+            if (talentRequestDto.getEmployeeStatusId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("employeeStatus"), talentRequestDto.getEmployeeStatusId()));
             }
 
             if (talentRequestDto.getTalentAvailability() != null) {
@@ -43,16 +39,16 @@ public class TalentSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("experience"), talentRequestDto.getTalentExperience()));
             }
 
-            if (talentRequestDto.getTalentLevel() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("talentLevel"), talentRequestDto.getTalentLevel()));
+            if (talentRequestDto.getTalentLevelId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("talentLevel"), talentRequestDto.getTalentLevelId()));
             }
 
-            if (talentRequestDto.getPosition() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("position"), talentRequestDto.getPosition()));
+            if (talentRequestDto.getPositionIds() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("position"), talentRequestDto.getPositionIds()));
             }
 
-            if (talentRequestDto.getSkillSet() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("skillSet"), talentRequestDto.getSkillSet()));
+            if (talentRequestDto.getSkillSetIds() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("skillSet"), talentRequestDto.getSkillSetIds()));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

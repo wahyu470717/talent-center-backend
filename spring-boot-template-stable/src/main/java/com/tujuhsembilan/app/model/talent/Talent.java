@@ -24,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -49,40 +50,40 @@ public class Talent {
   @Column(name = "talent_name", nullable = false)
   private String talentName;
 
-  @Column(name = "talent_photo_filename", nullable = false)
+  @Column(name = "talent_photo_filename")
   private String talentPhotoFilename;
 
-  @Column(name = "employee_number", nullable = false)
+  @Column(name = "employee_number")
   private String employeeNumber;
 
   @Column( name = "gender")
   private Character gender;
 
-  @Column( name = "birth_date", nullable = false )
+  @Column( name = "birth_date" )
   private Timestamp birthDate;
 
-  @Column( name = "talent_description", nullable = false )
+  @Column( name = "talent_description")
   private String talentDescription;
 
-  @Column( name = "talent_cv_filename", nullable = false )
+  @Column( name = "talent_cv_filename")
   private String talentCvFilename;
 
-  @Column( name = "experience", nullable = false )
+  @Column( name = "experience" )
   private Integer experience;
 
-  @Column( name = "email", nullable = false )
+  @Column( name = "email" )
   private String email;
 
-  @Column( name = "cellphone", nullable = false )
+  @Column( name = "cellphone" )
   private String cellphone;
 
-  @Column( name = "biography_video_url", nullable = false )
+  @Column( name = "biography_video_url" )
   private String biographyVideoUrl;
 
-  @Column( name = "is_add_to_list_enable", nullable = false)
+  @Column( name = "is_add_to_list_enable")
   private Boolean isAddToListEnable;
 
-  @Column( name = "talent_availability", nullable = false)
+  @Column( name = "talent_availability")
   private Boolean talentAvailability;
 
   @Column(name = "is_active")
@@ -136,4 +137,7 @@ public class Talent {
 
   @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<TalentWishlist> talentWishlists;
+
+  @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private TalentMetadata talentMetadatas;
 }
