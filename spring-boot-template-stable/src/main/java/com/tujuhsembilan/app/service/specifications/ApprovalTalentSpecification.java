@@ -10,7 +10,7 @@ import com.tujuhsembilan.app.model.talent.Talent;
 
 import jakarta.persistence.criteria.Predicate;
 
-public class TalentSpecification {
+public class ApprovalTalentSpecification {
     public static Specification<Talent> talentFilter(TalentRequestDto talentRequestDto) {
         return (root, query, criteriaBuilder) -> {
 

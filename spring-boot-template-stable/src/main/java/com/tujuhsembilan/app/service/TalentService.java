@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tujuhsembilan.app.dto.request.PageRequest;
-import com.tujuhsembilan.app.dto.request.TalentRequest;
+import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.response.talent_response.PositionResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.SkillsetResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
@@ -35,7 +35,7 @@ public class TalentService {
 
     // ============================GET ALL TALENT===============================//
 
-    public ResponseEntity<List<TalentResponse>> getAllTalents(TalentRequest filter, PageRequest pageRequest) {
+    public ResponseEntity<List<TalentResponse>> getAllTalents(TalentRequestDto filter, PageRequest pageRequest) {
         Pageable pageable = pageRequest.getPage();
         Page<Object[]> talentData = talentRepository.findAllTalentsWithPositionsAndSkills(pageable);
 

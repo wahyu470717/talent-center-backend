@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.tujuhsembilan.app.dto.request.TalentRequest;
+import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.model.employee.EmployeeStatus;
 import com.tujuhsembilan.app.model.position.Position;
@@ -57,7 +57,7 @@ public class EditTalentService {
   @Autowired
   private MinioSrvc minioService;
 
-  public MessageResponse editTalent(UUID talentId, TalentRequest talentRequest, MultipartFile talentFile) {
+  public MessageResponse editTalent(UUID talentId, TalentRequestDto talentRequest, MultipartFile talentFile) {
     try {
       Optional<Talent> talentOptional = talentRepository.findById(talentId);
       if (talentOptional.isPresent()) {

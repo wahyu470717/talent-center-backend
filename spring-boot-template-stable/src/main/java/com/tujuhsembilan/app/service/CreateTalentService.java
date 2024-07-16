@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.tujuhsembilan.app.dto.request.TalentRequest;
+import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.model.employee.EmployeeStatus;
 import com.tujuhsembilan.app.model.position.Position;
@@ -55,7 +55,7 @@ public class CreateTalentService {
     @Autowired
     private MinioSrvc minioService;
 
-    public MessageResponse createTalent(TalentRequest talentRequest, MultipartFile talentFile) {
+    public MessageResponse createTalent(TalentRequestDto talentRequest, MultipartFile talentFile) {
         Talent talent = new Talent();
 
         try {

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.tujuhsembilan.app.dto.request.TalentRequest;
+import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
@@ -78,7 +78,7 @@ public class MinioSrvc {
     return (dotIndex == -1) ? "" : filename.substring(dotIndex);
   }
 
-  public String uploadFileToMinio(TalentRequest request, MultipartFile  talentFile) throws IOException {
+  public String uploadFileToMinio(TalentRequestDto request, MultipartFile  talentFile) throws IOException {
         String talentName = sanitizeForFilename(request.getTalentName());
 
         if (talentName.isEmpty()) {
@@ -111,7 +111,7 @@ public class MinioSrvc {
         return generatedFilename;
     }
 
-    public String updateFileToMinio(TalentRequest request, MultipartFile talentFile) throws IOException {
+    public String updateFileToMinio(TalentRequestDto request, MultipartFile talentFile) throws IOException {
         String talentName = sanitizeForFilename(request.getTalentName());
 
         if (talentName.isEmpty() ) {

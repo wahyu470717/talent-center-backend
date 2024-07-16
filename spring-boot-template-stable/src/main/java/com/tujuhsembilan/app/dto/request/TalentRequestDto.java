@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TalentRequest {
+public class TalentRequestDto {
   private String imageFilename;
   private String talentName;
   private UUID talentStatusId;
@@ -33,5 +33,5 @@ public class TalentRequest {
   private String email;
   private String cellphone;
   private List<UUID> positionIds;
-  private List<UUID> skillSetIds; 
+  private List<UUID> skillSetIds;
 }

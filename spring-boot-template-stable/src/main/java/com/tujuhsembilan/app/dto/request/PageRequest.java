@@ -23,7 +23,7 @@ public class PageRequest {
         int pageSizeValue = (pageSize != null) ? pageSize < 1 ? 1 : pageSize : 10;
 
         Sort sort = Sort.by(Direction.DESC, "experience")
-                        .and(Sort.by(Direction.ASC, "talentLevel"));
+                .and(Sort.by(Direction.ASC, "talentLevel"));
 
         if (sortBy != null) {
             String[] parts = sortBy.split(",");
@@ -34,4 +34,22 @@ public class PageRequest {
 
         return org.springframework.data.domain.PageRequest.of(pageNumberValue - 1, pageSizeValue, sort);
     }
+
+
+    public Pageable getPageApproval() {
+        int pageNumberValue = (pageNumber != null) ? pageNumber < 1 ? 1 : pageNumber : 1;
+        int pageSizeValue = (pageSize != null) ? pageSize < 1 ? 1 : pageSize : 10;
+
+        Sort sort = Sort.by(Direction.DESC, "requestDate");
+
+        if (sortBy != null) {
+            String[] parts = sortBy.split(",");
+            String sortField = parts[0];
+            String sortOrder = parts.length > 1 ? parts[1] : "ASC";
+            sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
+        }
+
+        return org.springframework.data.domain.PageRequest.of(pageNumberValue - 1, pageSizeValue, sort);
+    }
+    
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tujuhsembilan.app.dto.request.PageRequest;
-import com.tujuhsembilan.app.dto.request.TalentRequest;
+import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.response.employee_response.EmployeeStatusResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
@@ -28,7 +28,6 @@ import com.tujuhsembilan.app.service.EmployeeStatusService;
 import com.tujuhsembilan.app.service.TalentService;
 
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequestMapping("/talent-management")
@@ -50,7 +49,7 @@ public class TalentController {
     // GET_ALL_TALENTS
     @GetMapping("/talents")
     public ResponseEntity<List<TalentResponse>> getTalent(
-            @ModelAttribute TalentRequest filter,
+            @ModelAttribute TalentRequestDto filter,
             PageRequest pageRequest) {
         return talentService.getAllTalents(filter, pageRequest);
     }
@@ -71,17 +70,17 @@ public class TalentController {
     @PostMapping(path = { "/talents" }, consumes = { MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<MessageResponse> createTalent(
-            @RequestPart("request") TalentRequest request,
+            @RequestPart("request") TalentRequestDto request,
             @RequestPart(value = "file", required = false) MultipartFile file) {
         MessageResponse response = createTalentService.createTalent(request, file);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
-    
-   // PUT_EDIT_DATA_TALENT
+
+    // PUT_EDIT_DATA_TALENT
     @PutMapping("/talents/{talentId}")
     public ResponseEntity<MessageResponse> editTalent(
             @PathVariable UUID talentId,
-            @RequestPart("request") TalentRequest request,
+            @RequestPart("request") TalentRequestDto request,
             @RequestPart(value = "file", required = false) MultipartFile file) {
         MessageResponse response = editTalentService.editTalent(talentId, request, file);
         return ResponseEntity.status(response.getStatusCode()).body(response);
