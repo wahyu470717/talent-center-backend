@@ -3,9 +3,7 @@ package com.tujuhsembilan.app.service.talent_approval;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,18 +17,15 @@ import com.tujuhsembilan.app.repository.approval_talent_repo.TalentRequestReposi
 
 @Service
 @Transactional
-public class ApprovalTalentService {
+public class GetApprovalTalentService {
 
   @Autowired
   private TalentRequestRepository talentRequestRepository;
 
-  // @Autowired
-  // private ModelMapper modelmapper;
-
   public ResponseEntity<List<ApprovalTalentResponse>> getAllApprovalTalent(ApprovalRequestDto filter,
       PageRequest pageRequest) {
 
-  
+    try {
       Pageable pageable = pageRequest.getPageApproval();
       List<TalentRequest> talentApproval = talentRequestRepository.findApprovalTalent(pageable).getContent();
 
@@ -45,6 +40,8 @@ public class ApprovalTalentService {
       }).collect(Collectors.toList());
 
       return ResponseEntity.ok(approvalTalentResponses);
-    
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(null);
+    }
   }
 }
