@@ -34,7 +34,7 @@ public class ApprovalTalentController {
     @Autowired
     private ApproveOrRejectTalentService approveTalentService;
 
-    // // GET_ALL_TALENTS_APPROVAL
+    // GET_ALL_TALENTS_APPROVAL
     @GetMapping("/talent-approvals")
     public ResponseEntity<List<ApprovalTalentResponse>> getTalentApproval(
             @ModelAttribute ApprovalRequestDto filter,
