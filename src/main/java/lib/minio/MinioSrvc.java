@@ -48,7 +48,11 @@ public class MinioSrvc {
   }
 
   public String getLink(String filename, Long expiry) {
-    try {
+    if (filename == null || filename.trim().isEmpty()) {
+      throw new IllegalArgumentException("Filename must not be null or empty");
+  }
+  
+  try {
       return minio.getPresignedObjectUrl(
           GetPresignedObjectUrlArgs.builder()
               .method(Method.GET)
@@ -56,13 +60,13 @@ public class MinioSrvc {
               .object(filename)
               .expiry(Math.toIntExact(expiry), TimeUnit.SECONDS)
               .build());
-    } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
-        | InvalidResponseException | NoSuchAlgorithmException | XmlParserException | ServerException
-        | IllegalArgumentException | IOException e) {
+  } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+      | InvalidResponseException | NoSuchAlgorithmException | XmlParserException | ServerException
+      | IllegalArgumentException | IOException e) {
       log.error(message.get(prop.getGetErrorMessage(), bfMsg(prop.getBucketName(), filename)) + ": " + e.getLocalizedMessage(), e);
       throw new MinioServiceDownloadException(
           message.get(prop.getGetErrorMessage(), bfMsg(prop.getBucketName(), filename)), e);
-    }
+  }
   }
   
   public String getPublicLink(String filename) {

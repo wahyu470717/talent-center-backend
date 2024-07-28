@@ -23,7 +23,7 @@ public class ApproveOrRejectTalentService {
       TalentRequest talentRequest = talentRequestRepository.findById(request.getTalentRequestId()).orElse(null);
       if (talentRequest == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new MessageResponse("Talent request not found", HttpStatus.NOT_FOUND.value(), "FAILED"));
+            .body(new MessageResponse(0,"Talent request not found", HttpStatus.NOT_FOUND.value(), "FAILED"));
       }
 
       // Assuming 'action' field is used to determine approval
@@ -31,19 +31,19 @@ public class ApproveOrRejectTalentService {
         talentRequest.getTalentRequestStatus().setTalentRequestStatusName("Approved");
         talentRequest.setRequestRejectReason(null);
         talentRequestRepository.save(talentRequest);
-        return ResponseEntity.ok(new MessageResponse("Talent approved successfully", HttpStatus.OK.value(), "SUCCESS"));
+        return ResponseEntity.ok(new MessageResponse(0,"Talent approved successfully", HttpStatus.OK.value(), "SUCCESS"));
       } else if ("reject".equalsIgnoreCase(request.getAction())) {
         talentRequest.getTalentRequestStatus().setTalentRequestStatusName("Rejected");
         talentRequest.setRequestRejectReason(request.getRejectReason());
         talentRequestRepository.save(talentRequest);
-        return ResponseEntity.ok(new MessageResponse("Talent rejected successfully", HttpStatus.OK.value(), "SUCCESS"));
+        return ResponseEntity.ok(new MessageResponse(0,"Talent rejected successfully", HttpStatus.OK.value(), "SUCCESS"));
       } else {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new MessageResponse("Invalid action", HttpStatus.BAD_REQUEST.value(), "FAILED"));
+            .body(new MessageResponse(0,"Invalid action", HttpStatus.BAD_REQUEST.value(), "FAILED"));
       }
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new MessageResponse("Error processing talent request", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+          .body(new MessageResponse(0,"Error processing talent request", HttpStatus.INTERNAL_SERVER_ERROR.value(),
               "FAILED"));
     }
   }

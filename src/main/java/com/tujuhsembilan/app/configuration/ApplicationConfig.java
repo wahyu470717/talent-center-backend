@@ -12,6 +12,8 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,40 +28,41 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.toedter.spring.hateoas.jsonapi.JsonApiConfiguration;
-// import com.tujuhsembilan.app.model.SampleModel;
-// import com.tujuhsembilan.app.repository.SampleRepository;
+import com.tujuhsembilan.app.model.SampleModel;
+import com.tujuhsembilan.app.repository.SampleRepository;
 
 import lib.i18n.utility.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Configuration
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @EnableWebSecurity
+@EnableCaching
 public class ApplicationConfig {
 
   private final MessageUtil msg;
 
-  // @Bean
-  // public ApplicationRunner init(SampleRepository sampleRepo) {
-  //   return args -> {
-  //     log.info(msg.get("application.init"));
+  @Bean
+  public ApplicationRunner init(SampleRepository sampleRepo) {
+    return args -> {
+      log.info(msg.get("application.init"));
 
-  //     if (sampleRepo.count() <= 0) {
-  //       for (int i = 0; i < 100; i++) {
-  //         sampleRepo.save(SampleModel.builder()
-  //             .code(String.format("%08d", i) + DigestUtils.sha256Hex(String.valueOf(i)).substring(0, 24))
-  //             .description("Blabla")
-  //             .date(LocalDateTime.now().minus(i, ChronoUnit.DAYS))
-  //             .build());
-  //       }
-  //     }
+      if (sampleRepo.count() <= 0) {
+        for (int i = 0; i < 100; i++) {
+          sampleRepo.save(SampleModel.builder()
+              .code(String.format("%08d", i) + DigestUtils.sha256Hex(String.valueOf(i)).substring(0, 24))
+              .description("Blabla")
+              .date(LocalDateTime.now().minus(i, ChronoUnit.DAYS))
+              .build());
+        }
+      }
 
-  //     log.info(msg.get("application.done"));
-  //   };
-  // }
+      log.info(msg.get("application.done"));
+    };
+  }
 
   @Bean
   public ModelMapper modelMapper() {
@@ -125,6 +128,15 @@ public class ApplicationConfig {
   @Bean
   public DateTimeFormatter dateFormatter() {
       return DateTimeFormatter.ofPattern("dd MMMM yyyy");
+  }
+
+  @Bean
+  public CaffeineCacheManager cacheManager() {
+    CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+    cacheManager.setCaffeine(Caffeine.newBuilder()
+        .expireAfterWrite(10, java.util.concurrent.TimeUnit.MINUTES)
+        .maximumSize(1000));
+    return cacheManager;
   }
 
 }

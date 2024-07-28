@@ -1,6 +1,8 @@
 package com.tujuhsembilan.app.service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -102,7 +104,7 @@ public class EditTalentService {
         }
 
         // Update TalentPositions
-        Set<TalentPosition> updatedPositions = talentRequest.getPositionIds().stream().map(positionId -> {
+        List<TalentPosition> updatedPositions = (List<TalentPosition>) talentRequest.getPositionIds().stream().map(positionId -> {
           TalentPositionId talentPositionId = new TalentPositionId(talent.getTalentId(), positionId);
           TalentPosition talentPosition = new TalentPosition();
           talentPosition.setId(talentPositionId);
@@ -115,7 +117,7 @@ public class EditTalentService {
         talent.setTalentPositions(updatedPositions);
 
         // Update TalentSkillsets
-        Set<TalentSkillset> updatedSkillsets = talentRequest.getSkillSetIds().stream().map(skillsetId -> {
+        List<TalentSkillset> updatedSkillsets = (List<TalentSkillset>) talentRequest.getSkillSetIds().stream().map(skillsetId -> {
           TalentSkillsetId talentSkillsetId = new TalentSkillsetId(talent.getTalentId(), skillsetId);
           TalentSkillset talentSkillset = new TalentSkillset();
           talentSkillset.setId(talentSkillsetId);
@@ -137,16 +139,16 @@ public class EditTalentService {
         }
 
         talentRepository.save(talent);
-        return new MessageResponse("Talent updated successfully", 200, "SUCCESS");
+        return new MessageResponse(1,"Talent updated successfully", 200, "SUCCESS");
       } else {
-        return new MessageResponse("Talent not found with ID: " + talentId, 404, "ERROR");
+        return new MessageResponse(0,"Talent not found with ID: " + talentId, 404, "ERROR");
       }
     } catch (IllegalArgumentException e) {
-      return new MessageResponse("Failed to update talent: " + e.getMessage(), 400, "ERROR");
+      return new MessageResponse(0,"Failed to update talent: " + e.getMessage(), 400, "ERROR");
     } catch (IOException e) {
-      return new MessageResponse("Failed to upload file: " + e.getMessage(), 500, "ERROR");
+      return new MessageResponse(0,"Failed to upload file: " + e.getMessage(), 500, "ERROR");
     } catch (Exception e) {
-      return new MessageResponse("An unexpected error occurred: " + e.getMessage(), 500, "ERROR");
+      return new MessageResponse(0,"An unexpected error occurred: " + e.getMessage(), 500, "ERROR");
     }
   }
 }

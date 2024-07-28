@@ -21,6 +21,7 @@ import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.response.employee_response.EmployeeStatusResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
+import com.tujuhsembilan.app.dto.response.talent_response.TalentMessageResponseDto;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
 import com.tujuhsembilan.app.service.CreateTalentService;
 import com.tujuhsembilan.app.service.EditTalentService;
@@ -48,7 +49,7 @@ public class TalentController {
 
     // GET_ALL_TALENTS
     @GetMapping("/talents")
-    public ResponseEntity<List<TalentResponse>> getTalent(
+    public ResponseEntity<TalentMessageResponseDto> getTalent(
             @ModelAttribute TalentRequestDto filter,
             PageRequest pageRequest) {
         return talentService.getAllTalents(filter, pageRequest);

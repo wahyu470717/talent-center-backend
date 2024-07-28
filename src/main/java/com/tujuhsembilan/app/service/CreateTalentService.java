@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,7 +87,7 @@ public class CreateTalentService {
             }
 
             // Fetch and set TalentPositions
-            Set<TalentPosition> talentPositions = talentRequest.getPositionIds().stream().map(positionId -> {
+            List<TalentPosition> talentPositions = talentRequest.getPositionIds().stream().map(positionId -> {
                 TalentPositionId talentPositionId = new TalentPositionId(talent.getTalentId(), positionId);
                 TalentPosition talentPosition = new TalentPosition();
                 talentPosition.setId(talentPositionId);
@@ -94,11 +95,11 @@ public class CreateTalentService {
                 Position position = positionRepository.findById(positionId).orElseThrow(() -> new IllegalArgumentException("Invalid Position ID"));
                 talentPosition.setPosition(position);
                 return talentPosition;
-            }).collect(Collectors.toSet());
+            }).collect(Collectors.toList());
             talent.setTalentPositions(talentPositions);
 
             // Fetch and set TalentSkillsets
-            Set<TalentSkillset> talentSkillsets = talentRequest.getSkillSetIds().stream().map(skillsetId -> {
+            List<TalentSkillset> talentSkillsets = (List<TalentSkillset>) talentRequest.getSkillSetIds().stream().map(skillsetId -> {
                 TalentSkillsetId talentSkillsetId = new TalentSkillsetId(talent.getTalentId(), skillsetId);
                 TalentSkillset talentSkillset = new TalentSkillset();
                 talentSkillset.setId(talentSkillsetId);
@@ -129,13 +130,13 @@ public class CreateTalentService {
             }
 
             talentRepository.save(talent);
-            return new MessageResponse("Talent created successfully", 200, "SUCCESS");
+            return new MessageResponse(0,"Talent created successfully", 200, "SUCCESS");
         } catch (IllegalArgumentException e) {
-            return new MessageResponse("Failed to create talent: " + e.getMessage(), 400, "ERROR");
+            return new MessageResponse(0,"Failed to create talent: " + e.getMessage(), 400, "ERROR");
         } catch (IOException e) {
-            return new MessageResponse("Failed to upload file: " + e.getMessage(), 500, "ERROR");
+            return new MessageResponse(0,"Failed to upload file: " + e.getMessage(), 500, "ERROR");
         } catch (Exception e) {
-            return new MessageResponse("An unexpected error occurred: " + e.getMessage(), 500, "ERROR");
+            return new MessageResponse(0,"An unexpected error occurred: " + e.getMessage(), 500, "ERROR");
         }
     }
 }

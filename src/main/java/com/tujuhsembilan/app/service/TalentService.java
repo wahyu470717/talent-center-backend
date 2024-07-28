@@ -20,9 +20,12 @@ import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.response.talent_response.PositionResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.SkillsetResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
+import com.tujuhsembilan.app.dto.response.talent_response.TalentMessageResponseDto;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
 import com.tujuhsembilan.app.model.talent.Talent;
 import com.tujuhsembilan.app.repository.TalentRepository;
+
+import lib.minio.MinioSrvc;
 
 @Service
 @Transactional
@@ -33,39 +36,56 @@ public class TalentService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private MinioSrvc minioSrvc;
+
     // ============================GET ALL TALENT===============================//
 
-    public ResponseEntity<List<TalentResponse>> getAllTalents(TalentRequestDto filter, PageRequest pageRequest) {
+    public ResponseEntity<TalentMessageResponseDto> getAllTalents(TalentRequestDto filter, PageRequest pageRequest) {
         Pageable pageable = pageRequest.getPage();
-        Page<Object[]> talentData = talentRepository.findAllTalentsWithPositionsAndSkills(pageable);
 
-        List<TalentResponse> talentResponses = talentData.getContent().stream()
-                .map(this::mapToTalentResponse)
-                .collect(Collectors.toList());
+        Page<Talent> talents = talentRepository.findAll(pageable);
+        long totalTalent = talentRepository.count();
+        List<TalentResponse> talentResponseDTOs = talents.getContent().stream().map(
+                talent -> {
+                    TalentResponse response = new TalentResponse();
+                    response.setTalentId(talent.getTalentId());
 
-        return ResponseEntity.ok(talentResponses);
-    }
+                    // Pastikan filename tidak null
+                    String filename = talent.getTalentPhotoFilename();
+                    if (filename != null && !filename.trim().isEmpty()) {
+                        response.setTalentPhotoUrl(minioSrvc.getPublicLink(filename));
+                    } else {
+                        response.setTalentPhotoUrl(null); // atau URL default
+                    }
 
-    private TalentResponse mapToTalentResponse(Object[] data) {
-        Talent talent = (Talent) data[0];
-        String positionIds = (String) data[1];
-        String positionNames = (String) data[2];
-        String skillIds = (String) data[3];
-        String skillNames = (String) data[4];
+                    response.setTalentName(talent.getTalentName());
+                    response.setTalentStatus(talent.getTalentStatus().getTalentStatusName());
+                    response.setEmployeeStatus(talent.getEmployeeStatus().getEmployeeStatusName());
+                    response.setTalentAvailability(talent.getTalentAvailability());
+                    response.setTalentExperience(talent.getExperience());
+                    response.setTalentLevel(talent.getTalentLevel().getTalentLevelName());
 
-        TalentResponse talentResponse = new TalentResponse();
-        talentResponse.setTalentId(talent.getTalentId());
-        talentResponse.setTalentPhotoUrl(talent.getTalentPhotoUrl());
-        talentResponse.setTalentName(talent.getTalentName());
-        talentResponse.setEmployeeStatus(talent.getEmployeeStatus().getEmployeeStatusName());
-        talentResponse.setTalentAvailability(talent.getTalentAvailability());
-        talentResponse.setTalentExperience(talent.getExperience());
-        talentResponse.setTalentLevel(talent.getTalentLevel().getTalentLevelName());
-        talentResponse.setTalentStatus(talent.getTalentStatus().getTalentStatusName());
-        talentResponse.setPosition(mapPositions(positionIds, positionNames));
-        talentResponse.setSkillSet(mapSkillsets(skillIds, skillNames));
+                    // Mendapatkan PositionResponseDTO
+                    List<PositionResponse> positions = talentRepository.findPositionsByTalentId(talent.getTalentId());
+                    response.setPosition(positions.isEmpty() ? null : positions);
 
-        return talentResponse;
+                    // Mendapatkan SkillsetResponseDTO
+                    List<SkillsetResponse> skillsets = talentRepository.findSkillsetsByTalentId(talent.getTalentId());
+                    response.setSkillSet(skillsets.isEmpty() ? null : skillsets);
+
+                    return response;
+                }).collect(Collectors.toList());
+
+        TalentMessageResponseDto result = TalentMessageResponseDto.builder()
+                .data(talentResponseDTOs)
+                .totalData(totalTalent)
+                .message("Get All Talent Success")
+                .status("SUCCESS")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     // ===========================DETAIL TALENT=================================//
@@ -92,9 +112,9 @@ public class TalentService {
         String positionNames = (String) data[2];
         String skillIds = (String) data[3];
         String skillNames = (String) data[4];
-    
+
         TalentDetailResponse talentDetailResponse = new TalentDetailResponse();
-        
+
         // Explicitly map properties
         talentDetailResponse.setTalentId(talent.getTalentId());
         talentDetailResponse.setTalentPhotoUrl(talent.getTalentPhotoUrl());
@@ -118,13 +138,13 @@ public class TalentService {
         } else {
             talentDetailResponse.setCv(null); // or set default value as needed
         }
-    
+
         talentDetailResponse.setPositions(mapPositions(positionIds, positionNames));
         talentDetailResponse.setSkillSets(mapSkillsets(skillIds, skillNames));
-    
+
         return talentDetailResponse;
     }
-    
+
     // =======================mapping skillset & position ======================//
     private List<PositionResponse> mapPositions(String positionIds, String positionNames) {
         String[] ids = positionIds.split(",");

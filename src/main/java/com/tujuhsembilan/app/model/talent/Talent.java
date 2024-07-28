@@ -1,9 +1,12 @@
 package com.tujuhsembilan.app.model.talent;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +16,7 @@ import com.tujuhsembilan.app.model.position.TalentPosition;
 import com.tujuhsembilan.app.model.skillset.TalentSkillset;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentWishlist;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,6 +44,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "talent")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Talent {
 
   @Id
@@ -56,7 +61,8 @@ public class Talent {
   @Column(name = "employee_number")
   private String employeeNumber;
 
-  @Column( name = "gender")
+  
+  @Column( name = "gender", length= 1)
   private Character gender;
 
   @Column( name = "birth_date" )
@@ -130,10 +136,10 @@ public class Talent {
   private TalentLevel talentLevel;
 
   @OneToMany(mappedBy = "talent",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<TalentPosition> talentPositions;
+  private List<TalentPosition> talentPositions;
 
   @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<TalentSkillset> talentSkillsets;
+  private List<TalentSkillset> talentSkillsets;
 
   @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<TalentWishlist> talentWishlists;
