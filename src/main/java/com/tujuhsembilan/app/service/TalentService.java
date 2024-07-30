@@ -1,13 +1,14 @@
 package com.tujuhsembilan.app.service;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,31 +18,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tujuhsembilan.app.dto.request.PageRequest;
-import com.tujuhsembilan.app.dto.request.TalentRequestDto;
 import com.tujuhsembilan.app.dto.request.TalentSpesificationRequest;
 import com.tujuhsembilan.app.dto.response.talent_response.PositionResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.SkillsetResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentMessageResponseDto;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
+import com.tujuhsembilan.app.exception.NotFoundException;
 import com.tujuhsembilan.app.model.talent.Talent;
 import com.tujuhsembilan.app.repository.TalentRepository;
+import com.tujuhsembilan.app.repository.approval_talent_repo.TalentRequestRepository;
 import com.tujuhsembilan.app.service.specifications.TalentSpecification;
 
 import lib.minio.MinioSrvc;
 
 @Service
 @Transactional
-public class TalentService {
+public class TalentService<NotFoundResponse> {
         @Autowired
         private TalentRepository talentRepository;
 
         @Autowired
-        private ModelMapper modelMapper;
+        private TalentRequestRepository talentRequestRepository;
 
         @Autowired
         private MinioSrvc minioSrvc;
 
+        @Autowired
+        private MessageSource messageSource;
         // ============================GET ALL TALENT===============================//
 
         public ResponseEntity<TalentMessageResponseDto> getAllTalents(TalentSpesificationRequest filter,
@@ -158,86 +162,103 @@ public class TalentService {
         }
 
         // ===========================DETAIL TALENT=================================//
-        public ResponseEntity<TalentDetailResponse> getTalentDetailById(UUID talentId) {
-                Optional<Object> talentDataOptional = talentRepository.findTalentWithPositionsAndSkillsById(talentId);
+        public ResponseEntity<?> getTalentDetailById(UUID talentId) {
+                // Fetch talent from the repository
+                Optional<Talent> talentDetailOptional = talentRepository.findById(talentId);
 
-                if (talentDataOptional.isPresent()) {
-                        Object talentData = talentDataOptional.get();
-                        if (talentData instanceof Object[]) {
-                                Object[] dataArray = (Object[]) talentData;
-                                TalentDetailResponse talentDetailResponse = mapToTalentDetailResponse(dataArray);
-                                return ResponseEntity.ok(talentDetailResponse);
-                        } else {
-                                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                        }
-                } else {
-                        return ResponseEntity.notFound().build();
+                // Check if the talent exists
+                if (talentDetailOptional.isEmpty()) {
+                        String message = messageSource.getMessage("talent.not.found", null, Locale.getDefault());
+                        String formatMessage = MessageFormat.format(message, talentId);
+
+                        return ResponseEntity
+                                        .status(HttpStatus.NOT_FOUND)
+                                        .body(new NotFoundException(formatMessage, HttpStatus.NOT_FOUND.value(),
+                                                        HttpStatus.NOT_FOUND.getReasonPhrase()));
                 }
-        }
 
-        private TalentDetailResponse mapToTalentDetailResponse(Object[] data) {
-                Talent talent = (Talent) data[0];
-                String positionIds = (String) data[1];
-                String positionNames = (String) data[2];
-                String skillIds = (String) data[3];
-                String skillNames = (String) data[4];
+                // Retrieve the Talent entity
+                Talent talent = talentDetailOptional.get();
 
                 TalentDetailResponse talentDetailResponse = new TalentDetailResponse();
-
-                // Explicitly map properties
                 talentDetailResponse.setTalentId(talent.getTalentId());
                 talentDetailResponse.setTalentPhotoUrl(talent.getTalentPhotoUrl());
                 talentDetailResponse.setTalentName(talent.getTalentName());
-                talentDetailResponse.setEmployeeStatus(talent.getEmployeeStatus().getEmployeeStatusName());
+                talentDetailResponse.setTalentStatus(
+                                talentDetailOptional.get().getTalentStatus() != null
+                                                ? talent.getTalentStatus().getTalentStatusName()
+                                                : null);
                 talentDetailResponse.setNip(talent.getEmployeeNumber());
-                talentDetailResponse.setSex(talent.getSex());
-                talentDetailResponse.setTalentExperience(talent.getExperience());
-                talentDetailResponse.setTalentLevel(talent.getTalentLevel().getTalentLevelName());
-                talentDetailResponse.setTalentStatus(talent.getTalentStatus().getTalentStatusName());
+                talentDetailResponse.setSex(talent.getGender());
                 talentDetailResponse.setDob(talent.getBirthDate());
                 talentDetailResponse.setTalentDescription(talent.getTalentDescription());
-                talentDetailResponse.setCellphone(talent.getCellphone());
+                talentDetailResponse.setCv(talent.getTalentCvUrl());
+                talentDetailResponse.setTalentExperience(talent.getExperience());
+                talentDetailResponse.setTalentLevel(
+                                talent.getTalentLevel() != null ? talent.getTalentLevel().getTalentLevelName() : null);
+                talentDetailResponse.setProjectCompleted(talent.getTalentMetadatas() != null
+                                ? talent.getTalentMetadatas().getTotalProjectCompleted()
+                                : null);
+                talentDetailResponse.setTotalRequested(talentRequestRepository.countRequestsByTalentId(talentId));
                 talentDetailResponse.setEmail(talent.getEmail());
-                talentDetailResponse.setProjectCompleted(talent.getTotalProjectCompleted());
-                talentDetailResponse.setVideoUrl(talent.getBiographyVideoUrl());
-                if (talent.getTalentCvFilename() != null) {
-                        talentDetailResponse.setCv(talent.getTalentCvFilename());
-                } else if (talent.getTalentCvUrl() != null) {
-                        talentDetailResponse.setCv(talent.getTalentCvUrl());
-                } else {
-                        talentDetailResponse.setCv(null); // or set default value as needed
+                talentDetailResponse.setCellphone(talent.getCellphone());
+                talentDetailResponse.setEmployeeStatus(
+                                talentDetailResponse.getEmployeeStatus() != null
+                                                ? talent.getEmployeeStatus().getEmployeeStatusName()
+                                                : null);
+                talentDetailResponse.setTalentAvailability(talent.getTalentAvailability());
+
+                // Set positions
+                List<PositionResponse> positions = talent.getTalentPositions().stream()
+                                .map(tp -> new PositionResponse(tp.getPosition().getPositionId(),
+                                                tp.getPosition().getPositionName()))
+                                .collect(Collectors.toList());
+                talentDetailResponse.setPosition(positions.isEmpty() ? null : positions);
+
+                // Set skill sets
+                List<SkillsetResponse> skillsets = talent.getTalentSkillsets().stream()
+                                .map(ts -> new SkillsetResponse(ts.getSkillset().getSkillsetId(),
+                                                ts.getSkillset().getSkillsetName()))
+                                .collect(Collectors.toList());
+                talentDetailResponse.setSkillSet(skillsets.isEmpty() ? null : skillsets);
+
+                // Set custom URL for talent photo if filename exists
+                if (talent.getTalentPhotoFilename() != null) {
+                        talentDetailResponse
+                                        .setTalentPhotoUrl(minioSrvc.getPublicLink(talent.getTalentPhotoFilename()));
                 }
 
-                talentDetailResponse.setPositions(mapPositions(positionIds, positionNames));
-                talentDetailResponse.setSkillSets(mapSkillsets(skillIds, skillNames));
-
-                return talentDetailResponse;
+                // Return the response with OK status
+                return ResponseEntity.ok(talentDetailResponse);
         }
-
         // =======================mapping skillset & position ======================//
-        private List<PositionResponse> mapPositions(String positionIds, String positionNames) {
-                String[] ids = positionIds.split(",");
-                String[] names = positionNames.split(",");
+        // private List<PositionResponse> mapPositions(String positionIds, String
+        // positionNames) {
+        // String[] ids = positionIds.split(",");
+        // String[] names = positionNames.split(",");
 
-                List<PositionResponse> positionResponseDtos = IntStream.range(0, ids.length)
-                                .mapToObj(i -> new PositionResponse(UUID.fromString(ids[i].trim()), names[i].trim()))
-                                .collect(Collectors.toList());
+        // List<PositionResponse> positionResponseDtos = IntStream.range(0, ids.length)
+        // .mapToObj(i -> new PositionResponse(UUID.fromString(ids[i].trim()),
+        // names[i].trim()))
+        // .collect(Collectors.toList());
 
-                return positionResponseDtos.stream()
-                                .map(positionDto -> modelMapper.map(positionDto, PositionResponse.class))
-                                .collect(Collectors.toList());
-        }
+        // return positionResponseDtos.stream()
+        // .map(positionDto -> modelMapper.map(positionDto, PositionResponse.class))
+        // .collect(Collectors.toList());
+        // }
 
-        private List<SkillsetResponse> mapSkillsets(String skillIds, String skillNames) {
-                String[] ids = skillIds.split(",");
-                String[] names = skillNames.split(",");
+        // private List<SkillsetResponse> mapSkillsets(String skillIds, String
+        // skillNames) {
+        // String[] ids = skillIds.split(",");
+        // String[] names = skillNames.split(",");
 
-                List<SkillsetResponse> skillsetResponseDtos = IntStream.range(0, ids.length)
-                                .mapToObj(i -> new SkillsetResponse(UUID.fromString(ids[i].trim()), names[i].trim()))
-                                .collect(Collectors.toList());
+        // List<SkillsetResponse> skillsetResponseDtos = IntStream.range(0, ids.length)
+        // .mapToObj(i -> new SkillsetResponse(UUID.fromString(ids[i].trim()),
+        // names[i].trim()))
+        // .collect(Collectors.toList());
 
-                return skillsetResponseDtos.stream()
-                                .map(skillsetDto -> modelMapper.map(skillsetDto, SkillsetResponse.class))
-                                .collect(Collectors.toList());
-        }
+        // return skillsetResponseDtos.stream()
+        // .map(skillsetDto -> modelMapper.map(skillsetDto, SkillsetResponse.class))
+        // .collect(Collectors.toList());
+        // }
 }

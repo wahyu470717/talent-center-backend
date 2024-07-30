@@ -13,22 +13,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TalentDetailResponse {
-  private UUID talentId; 
+  private UUID talentId;
   private String talentPhotoUrl;
   private String talentName;
-  private String employeeStatus;
-  private String nip;
-  private String sex;
-  private Integer talentExperience; 
-  private String talentLevel;
   private String talentStatus;
-  private Timestamp dob;
+  private String nip; //employeeNumber
+  private Character sex;
+  private Timestamp dob; //tanggal lahir
   private String talentDescription;
   private String cv;
+  private Integer talentExperience;
+  private String talentLevel;
   private Integer projectCompleted;
+  private Integer totalRequested;
+  private List<PositionResponse> position;
+  private List<SkillsetResponse> skillSet;
   private String email;
   private String cellphone;
+  private String employeeStatus;
+  private Boolean talentAvailability;
   private String videoUrl;
-  private List<PositionResponse> positions;
-  private List<SkillsetResponse> skillSets;
 }

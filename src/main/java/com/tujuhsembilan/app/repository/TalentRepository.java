@@ -53,17 +53,17 @@ public interface TalentRepository extends JpaRepository<Talent, UUID>, JpaSpecif
       "WHERE t.talentId = :talentId")
   List<SkillsetResponse> findSkillsetsByTalentId(@Param("talentId") UUID talentId);
 
-  @Query("SELECT t, " +
-      "STRING_AGG(CAST(p.positionId AS text), ',') AS positionIds, " +
-      "STRING_AGG(p.positionName, ',') AS positionNames, " +
-      "STRING_AGG(CAST(s.skillsetId AS text), ',') AS skillIds, " +
-      "STRING_AGG(s.skillsetName, ',') AS skillNames " +
-      "FROM Talent t " +
-      "LEFT JOIN t.talentPositions tp " +
-      "LEFT JOIN tp.position p " +
-      "LEFT JOIN t.talentSkillsets ts " +
-      "LEFT JOIN ts.skillset s " +
-      "WHERE t.talentId = :talentId " +
-      "GROUP BY t.talentId")
-  Optional<Object> findTalentWithPositionsAndSkillsById(UUID talentId);
+//   @Query("SELECT t, " +
+//       "STRING_AGG(CAST(p.positionId AS text), ',') AS positionIds, " +
+//       "STRING_AGG(p.positionName, ',') AS positionNames, " +
+//       "STRING_AGG(CAST(s.skillsetId AS text), ',') AS skillIds, " +
+//       "STRING_AGG(s.skillsetName, ',') AS skillNames " +
+//       "FROM Talent t " +
+//       "LEFT JOIN t.talentPositions tp " +
+//       "LEFT JOIN tp.position p " +
+//       "LEFT JOIN t.talentSkillsets ts " +
+//       "LEFT JOIN ts.skillset s " +
+//       "WHERE t.talentId = :talentId " +
+//       "GROUP BY t.talentId")
+//   Optional<Object> findTalentWithPositionsAndSkillsById(UUID talentId);
 }
