@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
+import com.tujuhsembilan.app.dto.request.id_dto.PositionIdDto;
+import com.tujuhsembilan.app.dto.request.id_dto.SkillSetIdDto;
 import com.tujuhsembilan.app.model.position.Position;
 import com.tujuhsembilan.app.model.skillset.Skillset;
 
@@ -21,7 +23,7 @@ public class TalentRequestDto {
   private String talentName;
   private UUID talentStatusId;
   private String nip;
-  private String sex;
+  private Character gender;
   private Timestamp dob;
   private String talentDescription;
   private String cv;
@@ -32,6 +34,6 @@ public class TalentRequestDto {
   private Integer projectCompleted;
   private String email;
   private String cellphone;
-  private List<UUID> positionIds;
-  private List<UUID> skillSetIds;
+ private List<PositionIdDto> positionIds;
+  private List<SkillSetIdDto> skillSetIds;
 }

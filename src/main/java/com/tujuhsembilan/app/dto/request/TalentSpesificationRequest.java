@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TalentSpesificationRequest {
+  private String talentName;
   private String talentLevel;
   private Integer talentExperience;
   private String talentStatus;

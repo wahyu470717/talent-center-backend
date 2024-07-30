@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,27 +30,28 @@ import lombok.NoArgsConstructor;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class TalentLevel {
-  
+
   @Id
   @Column(name = "talent_level_id", unique = true, nullable = false)
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID talentLevelId;
-  
-  @Column(name = "talent_level_name")
+
+  @Column(name = "talent_level_name", length = 50)
+  @Size(max = 50)
   private String talentLevelName;
-  
+
   @Column(name = "is_active")
   private Boolean isActive;
-  
+
   @Column(name = "created_by")
   private String createdBy;
-  
+
   @Column(name = "created_time")
   private Timestamp createdTime;
-  
+
   @Column(name = "last_modified_by")
   private String lastModifiedBy;
-  
+
   @Column(name = "last_modified_time")
   private Timestamp lastModifiedTime;
 

@@ -1,7 +1,7 @@
 package com.tujuhsembilan.app.model.skillset;
 
 import java.sql.Timestamp;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -22,6 +22,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,7 +46,8 @@ public class Skillset {
   @JoinColumn(name = "skillset_type_id", referencedColumnName = "skillset_type_id")
   private SkillsetType skillsetType;
 
-  @Column(name = "skillset_name", nullable = false)
+   @Column(name = "skillset_name", length = 50)
+   @Size(max = 50)
   private String skillsetName;
 
   @Column(name = "is_active")
@@ -68,5 +70,5 @@ public class Skillset {
   private Timestamp lastModifiedTime;
 
   @OneToMany(mappedBy = "skillset", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<TalentSkillset> talentSkillsets;
+  private List<TalentSkillset> talentSkillsets;
 }

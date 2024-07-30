@@ -15,6 +15,7 @@ import com.tujuhsembilan.app.model.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,9 +43,6 @@ public class Client {
   @Column(name = "client_id", unique = true, nullable = false)
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID clientId;
-
-  @Column( name = "user_id")
-  private UUID userId;
 
   @Column(name = "client_name")
   private String clientName;
@@ -89,9 +87,9 @@ public class Client {
   @Column( name = "last_mapped_id")
   private Long lastMappedId;
 
-  // @ManyToOne
-  // @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-  // private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+  private User user;
 
   @ManyToOne
   @JoinColumn(name = "client_position_id", referencedColumnName = "client_position_id")

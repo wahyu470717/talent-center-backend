@@ -2,9 +2,7 @@ package com.tujuhsembilan.app.model.skillset;
 
 import java.io.Serializable;
 import java.util.UUID;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EntityListeners;

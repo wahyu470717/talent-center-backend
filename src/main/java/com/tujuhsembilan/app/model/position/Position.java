@@ -39,7 +39,7 @@ public class Position {
   @Column(name = "position_id", updatable = false, nullable = false)
   private UUID positionId;
 
-  @Column(name = "position_name", nullable = false)
+  @Column(name = "position_name", length = 50)
   private String positionName;
 
   @Column(name = "is_active")

@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,7 +36,8 @@ public class TalentStatus {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID talentStatusId;
 
-    @Column(name = "talent_status_name", nullable = false)
+   @Column(name = "talent_status_name", length = 50)
+   @Size(max = 50)
     private String talentStatusName;
 
     @Column(name = "is_active")

@@ -22,6 +22,12 @@ public class TalentSpecification {
       return (root, query, criteriaBuilder) -> {
 
          List<Predicate> predicates = new ArrayList<Predicate>();
+         // --> talent name
+         if (request.getTalentName() != null && !request.getTalentName().isEmpty()) {
+            predicates.add(criteriaBuilder.like(
+                  criteriaBuilder.lower(root.get("talentName")),
+                  "%" + request.getTalentName().toLowerCase() + "%"));
+         }
 
          // --> talent level
          if (request.getTalentLevel() != null && !request.getTalentLevel().isEmpty()) {
@@ -36,11 +42,11 @@ public class TalentSpecification {
             int experience = request.getTalentExperience();
 
             if (experience == 0) {
-               predicates.add(criteriaBuilder.between(root.get("talentExperience"), 0, 1));
+               predicates.add(criteriaBuilder.between(root.get("experience"), 0, 1));
             } else if (experience == 1) {
-               predicates.add(criteriaBuilder.between(root.get("talentExperience"), 2, 4));
+               predicates.add(criteriaBuilder.between(root.get("experience"), 2, 4));
             } else if (experience == 2) {
-               predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("talentExperience"),
+               predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("experience"),
                      5));
             }
          }

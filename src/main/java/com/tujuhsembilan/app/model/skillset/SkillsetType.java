@@ -18,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +38,8 @@ public class SkillsetType {
   @Column(name = "skillset_type_id", unique = true, nullable = false)
   private UUID skillsetTypeId;
 
-  @Column(name = "skillset_type_name", nullable = false)
+  @Column(name = "skillset_type_name", length = 50)
+  @Size(max = 50)
   private String skillsetTypeName;
 
   @Column(name = "is_programming_skill", nullable = false)

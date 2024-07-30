@@ -2,10 +2,9 @@ package com.tujuhsembilan.app.model.talent;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,7 +15,6 @@ import com.tujuhsembilan.app.model.position.TalentPosition;
 import com.tujuhsembilan.app.model.skillset.TalentSkillset;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentWishlist;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +30,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -58,38 +57,40 @@ public class Talent {
   @Column(name = "talent_photo_filename")
   private String talentPhotoFilename;
 
-  @Column(name = "employee_number")
+  @Column(name = "employee_number", length = 50)
+  @Size(max = 50)
   private String employeeNumber;
 
-  
-  @Column( name = "gender", length= 1)
+  @Column(name = "gender", length = 1)
   private Character gender;
 
-  @Column( name = "birth_date" )
+  @Column(name = "birth_date")
   private Timestamp birthDate;
 
-  @Column( name = "talent_description")
+  @Column(name = "talent_description")
   private String talentDescription;
 
-  @Column( name = "talent_cv_filename")
+  @Column(name = "talent_cv_filename")
   private String talentCvFilename;
 
-  @Column( name = "experience" )
+  @Column(name = "experience")
   private Integer experience;
 
-  @Column( name = "email" )
+  @Column(name = "email", length = 100)
+  @Size(max = 100)
   private String email;
 
-  @Column( name = "cellphone" )
+  @Column(name = "cellphone", length = 20)
+  @Size(max = 20)
   private String cellphone;
 
-  @Column( name = "biography_video_url" )
+  @Column(name = "biography_video_url")
   private String biographyVideoUrl;
 
-  @Column( name = "is_add_to_list_enable")
+  @Column(name = "is_add_to_list_enable")
   private Boolean isAddToListEnable;
 
-  @Column( name = "talent_availability")
+  @Column(name = "talent_availability")
   private Boolean talentAvailability;
 
   @Column(name = "is_active")
@@ -135,14 +136,17 @@ public class Talent {
   @JoinColumn(name = "talent_level_id", referencedColumnName = "talent_level_id")
   private TalentLevel talentLevel;
 
-  @OneToMany(mappedBy = "talent",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @BatchSize(size=10)
   private List<TalentPosition> talentPositions;
 
   @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @BatchSize(size=10)
   private List<TalentSkillset> talentSkillsets;
 
   @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<TalentWishlist> talentWishlists;
+  @BatchSize(size=10)
+  private List<TalentWishlist> talentWishlists;
 
   @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private TalentMetadata talentMetadatas;

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tujuhsembilan.app.dto.request.PageRequest;
 import com.tujuhsembilan.app.dto.request.TalentRequestDto;
+import com.tujuhsembilan.app.dto.request.TalentSpesificationRequest;
 import com.tujuhsembilan.app.dto.response.employee_response.EmployeeStatusResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
@@ -50,7 +51,7 @@ public class TalentController {
     // GET_ALL_TALENTS
     @GetMapping("/talents")
     public ResponseEntity<TalentMessageResponseDto> getTalent(
-            @ModelAttribute TalentRequestDto filter,
+            @ModelAttribute TalentSpesificationRequest filter,
             PageRequest pageRequest) {
         return talentService.getAllTalents(filter, pageRequest);
     }
@@ -68,15 +69,15 @@ public class TalentController {
     }
 
     // POST_SAVE_DATA_TALENT
-    @PostMapping(path = { "/talents" }, consumes = { MediaType.APPLICATION_JSON_VALUE,
-            MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping(path = { "/talents" }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<MessageResponse> createTalent(
             @RequestPart("request") TalentRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
-        MessageResponse response = createTalentService.createTalent(request, file);
+            @RequestPart(value = "fotoFile", required = false) MultipartFile fotoFile,
+            @RequestPart(value = "cvFile", required = false) MultipartFile cvFile) {
+        MessageResponse response = createTalentService.createTalent(request, fotoFile, cvFile);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
-
+    
     // PUT_EDIT_DATA_TALENT
     @PutMapping("/talents/{talentId}")
     public ResponseEntity<MessageResponse> editTalent(

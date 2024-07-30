@@ -43,13 +43,13 @@ public class ApprovalTalentSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("talentLevel"), talentRequestDto.getTalentLevelId()));
             }
 
-            if (talentRequestDto.getPositionIds() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("position"), talentRequestDto.getPositionIds()));
-            }
+            // if (talentRequestDto.getPositionIds() != null) {
+            //     predicates.add(criteriaBuilder.equal(root.get("position"), talentRequestDto.getPositionIds()));
+            // }
 
-            if (talentRequestDto.getSkillSetIds() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("skillSet"), talentRequestDto.getSkillSetIds()));
-            }
+            // if (talentRequestDto.getSkillSetIds() != null) {
+            //     predicates.add(criteriaBuilder.equal(root.get("skillSet"), talentRequestDto.getSkillSetIds()));
+            // }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };

@@ -73,9 +73,13 @@ spring:
     ## URL_INTERNAL
       # url: jdbc:postgresql://10.10.5.180:5432/new_db_talentcenter
     ## URL_EXTERNAL
-    url: jdbc:postgresql://cloudias79.com:5545/new_db_talentcenter
-    username: usrtalentcenter
-    password: m1QVs3zKymgPduz
+    # url: jdbc:postgresql://cloudias79.com:5545/new_db_talentcenter
+    # username: usrtalentcenter
+    # password: m1QVs3zKymgPduz
+
+    url: jdbc:postgresql://localhost:5432/talent_center2
+    username: postgres
+    password: wahyu260697
     driverClassName: org.postgresql.Driver
   ## Configuration
   jpa:
@@ -100,3 +104,21 @@ application:
     username: devtalentcenter
     password: as4Dx6L4Uf1zFkyy
     bucketName: talent-center-app
+# # -----------------------------------
+# --- #
+# # -----------------------------------
+
+#-----------------------------------
+--- # servlet
+#-----------------------------------
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+# # -----------------------------------
+# --- #
+# # -----------------------------------
