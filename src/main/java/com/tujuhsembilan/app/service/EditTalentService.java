@@ -1,6 +1,7 @@
 package com.tujuhsembilan.app.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
@@ -59,10 +60,16 @@ public class EditTalentService {
   @Autowired
   private MinioSrvc minioService;
 
-  public MessageResponse editTalent(UUID talentId, TalentRequestDto talentRequest, MultipartFile talentFile) {
-    Talent talent = new Talent();
-
+public MessageResponse editTalent(UUID talentId, TalentRequestDto talentRequest, MultipartFile fotoFile, MultipartFile cvFile) {
     try {
+        // Fetch the existing Talent
+        Optional<Talent> existingTalentOptional = talentRepository.findById(talentId);
+        if (!existingTalentOptional.isPresent()) {
+            return new MessageResponse(0, "Talent not found", 404, "ERROR");
+        }
+        Talent talent = existingTalentOptional.get();
+
+        // Update fields
         talent.setTalentName(talentRequest.getTalentName());
 
         // Fetch and set TalentStatus
@@ -71,7 +78,7 @@ public class EditTalentService {
         if (talentStatusOptional.isPresent()) {
             talent.setTalentStatus(talentStatusOptional.get());
         } else {
-            throw new IllegalArgumentException("Invalid TalentStatus ID");
+            return new MessageResponse(0, "Invalid TalentStatus ID", 400, "ERROR");
         }
 
         // Fetch and set EmployeeStatus
@@ -80,7 +87,7 @@ public class EditTalentService {
         if (employeeStatusOptional.isPresent()) {
             talent.setEmployeeStatus(employeeStatusOptional.get());
         } else {
-            throw new IllegalArgumentException("Invalid EmployeeStatus ID");
+            return new MessageResponse(0, "Invalid EmployeeStatus ID", 400, "ERROR");
         }
 
         // Fetch and set TalentLevel
@@ -89,41 +96,24 @@ public class EditTalentService {
         if (talentLevelOptional.isPresent()) {
             talent.setTalentLevel(talentLevelOptional.get());
         } else {
-            throw new IllegalArgumentException("Invalid TalentLevel ID");
+            return new MessageResponse(0, "Invalid TalentLevel ID", 400, "ERROR");
         }
 
-        // Fetch and set TalentPositions
-        // Assuming PositionIdDto has a method getId() that returns UUID
-        // List<TalentPosition> talentPositions = talentRequest.getPositionIds().stream().map(positionIdDto -> {
-        //     UUID positionId = positionIdDto.getPositionId(); 
-        //     TalentPositionId talentPositionId = new TalentPositionId();
-        //     TalentPosition talentPosition = new TalentPosition();
-        //     talentPosition.setId(talentPositionId);
-        //     talentPosition.setTalent(talent);
-        //     Position position = positionRepository.findById(positionId)
-        //             .orElseThrow(() -> new IllegalArgumentException("Invalid Position ID"));
-        //     talentPosition.setPosition(position);
-        //     return talentPosition;
-        // }).collect(Collectors.toList());
-        // talent.setTalentPositions(talentPositions);
+        // Handle file upload to MinIO
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            String photoFilename = minioService.updateFileToMinio(talentRequest, fotoFile);
+            String photoUrl = minioService.getPublicLink(photoFilename);
+            talent.setTalentPhotoUrl(photoUrl);
+            talent.setTalentPhotoFilename(photoFilename);
+        }
 
-        // List<TalentSkillset> talentSkillsets = talentRequest.getSkillSetIds().stream().map(skillsetIdDto -> {
-        //     UUID skillsetId = skillsetIdDto.getSkillId();         
-        //     TalentSkillsetId talentSkillsetId = new TalentSkillsetId(talent.getTalentId(), skillsetId);      
-        //     TalentSkillset talentSkillset = new TalentSkillset();
-        //     talentSkillset.setId(talentSkillsetId);
-        //     talentSkillset.setTalent(talent);
-        
-        //     Skillset skillset = skillsetRepository.findById(skillsetId)
-        //             .orElseThrow(() -> new IllegalArgumentException("Invalid Skillset ID"));
-        
-        //     talentSkillset.setSkillset(skillset);
-        
-        //     return talentSkillset;
-        // }).collect(Collectors.toList());
-        // talent.setTalentSkillsets(talentSkillsets);
-        
+        if (cvFile != null && !cvFile.isEmpty()) {
+            String cvFilename = minioService.updateFileToMinio(talentRequest, cvFile);
+            String cvUrl = minioService.getPublicLink(cvFilename);
+            talent.setTalentCvUrl(cvUrl);
+        }
 
+        // Set remaining fields
         talent.setEmployeeNumber(talentRequest.getNip());
         talent.setGender(talentRequest.getGender());
         talent.setBirthDate(talentRequest.getDob());
@@ -134,23 +124,57 @@ public class EditTalentService {
         talent.setEmail(talentRequest.getEmail());
         talent.setCellphone(talentRequest.getCellphone());
 
-        // Handle file upload to MinIO
-        if (talentFile != null && !talentFile.isEmpty()) {
-            String photoFilename = minioService.uploadFileToMinio(talentRequest, talentFile);
-            talent.setTalentPhotoUrl(minioService.getPublicLink(photoFilename));
+        // Clear existing positions and skillsets
+        talent.getTalentPositions().clear();
+        talent.getTalentSkillsets().clear();
 
-            String cvFilename = minioService.uploadFileToMinio(talentRequest, talentFile);
-            talent.setTalentCvUrl(minioService.getPublicLink(cvFilename));
+        // Fetch and set TalentPositions
+        if (talentRequest.getPositionIds() != null) {
+            List<TalentPosition> talentPositions = new ArrayList<>();
+            for (var positionIdDto : talentRequest.getPositionIds()) {
+                UUID positionId = positionIdDto.getPositionId();
+                TalentPositionId talentPositionId = new TalentPositionId(talentId, positionId);
+                TalentPosition talentPosition = new TalentPosition();
+                talentPosition.setId(talentPositionId);
+                talentPosition.setTalent(talent);
+                Position position = positionRepository.findById(positionId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid Position ID"));
+                talentPosition.setPosition(position);
+                talentPositions.add(talentPosition);
+            }
+            // Set positions to talent
+            talent.getTalentPositions().addAll(talentPositions);
         }
 
+        // Fetch and set TalentSkillset
+        if (talentRequest.getSkillsetIds() != null) {
+            List<TalentSkillset> talentSkillsets = new ArrayList<>();
+            for (var skillsetIdDto : talentRequest.getSkillsetIds()) {
+                UUID skillsetId = skillsetIdDto.getSkillsetId();
+                TalentSkillsetId talentSkillsetId = new TalentSkillsetId(talentId, skillsetId);
+                TalentSkillset talentSkillset = new TalentSkillset();
+                talentSkillset.setId(talentSkillsetId);
+                talentSkillset.setTalent(talent);
+                Skillset skillset = skillsetRepository.findById(skillsetId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid Skillset ID"));
+                talentSkillset.setSkillset(skillset);
+                talentSkillsets.add(talentSkillset);
+            }
+            // Set skillsets to talent
+            talent.getTalentSkillsets().addAll(talentSkillsets);
+        }
+
+        // Save the updated Talent
         talentRepository.save(talent);
-        return new MessageResponse(0, "Talent created successfully", 200, "SUCCESS");
+
+        return new MessageResponse(1, "Talent updated successfully", 200, "SUCCESS");
     } catch (IllegalArgumentException e) {
-        return new MessageResponse(0, "Failed to create talent: " + e.getMessage(), 400, "ERROR");
+        return new MessageResponse(0, String.format("Failed to update talent: %s", e.getMessage()), 400, "ERROR");
     } catch (IOException e) {
-        return new MessageResponse(0, "Failed to upload file: " + e.getMessage(), 500, "ERROR");
+        return new MessageResponse(0, String.format("Failed to upload file: %s", e.getMessage()), 500, "ERROR");
     } catch (Exception e) {
-        return new MessageResponse(0, "An unexpected error occurred: " + e.getMessage(), 500, "ERROR");
+        return new MessageResponse(0, String.format("An unexpected error occurred: %s", e.getMessage()), 500, "ERROR");
     }
 }
+
 }

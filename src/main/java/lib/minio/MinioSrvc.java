@@ -134,7 +134,7 @@ public class MinioSrvc {
     String fileExtension = getFileExtension(talentFile.getOriginalFilename());
 
     String generatedFilename = String.format(
-        "%s_%s_%s_%s%s",
+      "%s_%s%s",
         talentName,
         timestamp,
         fileExtension);

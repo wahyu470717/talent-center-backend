@@ -79,12 +79,13 @@ public class TalentController {
     }
     
     // PUT_EDIT_DATA_TALENT
-    @PutMapping("/talents/{talentId}")
+    @PutMapping(path = "/talents/{talentId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<MessageResponse> editTalent(
             @PathVariable UUID talentId,
             @RequestPart("request") TalentRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
-        MessageResponse response = editTalentService.editTalent(talentId, request, file);
+            @RequestPart(value = "fotoFile", required = false) MultipartFile fotoFile,
+            @RequestPart(value = "cvFile", required = false) MultipartFile cvFile) {
+        MessageResponse response = editTalentService.editTalent(talentId, request, fotoFile, cvFile);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }
