@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SkillSetIdDto {
-  private UUID skillId;
+public class SkillsetIdDto {
+  private UUID skillsetId;
 }

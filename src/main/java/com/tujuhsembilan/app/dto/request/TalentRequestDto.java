@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.tujuhsembilan.app.dto.request.id_dto.PositionIdDto;
-import com.tujuhsembilan.app.dto.request.id_dto.SkillSetIdDto;
-import com.tujuhsembilan.app.model.position.Position;
-import com.tujuhsembilan.app.model.skillset.Skillset;
+import com.tujuhsembilan.app.dto.request.id_dto.SkillsetIdDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +32,6 @@ public class TalentRequestDto {
   private Integer projectCompleted;
   private String email;
   private String cellphone;
- private List<PositionIdDto> positionIds;
-  private List<SkillSetIdDto> skillSetIds;
+  private List<PositionIdDto> positionIds;
+  private List<SkillsetIdDto> skillsetIds;
 }

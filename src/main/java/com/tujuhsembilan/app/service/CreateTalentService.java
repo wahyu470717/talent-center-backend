@@ -140,25 +140,22 @@ public class CreateTalentService {
                 talent.getTalentPositions().addAll(talentPositions);
             }
 
-            // Fetch and set TalentSkillsets
-            if (talentRequest.getSkillSetIds() != null) {
+               // Fetch and set TalentSkillset
+               if (talentRequest.getSkillsetIds() != null) {
                 UUID talentId = talent.getTalentId(); // Final reference
                 List<TalentSkillset> talentSkillsets = new ArrayList<>();
-                for (var skillsetIdDto : talentRequest.getSkillSetIds()) {
-                    UUID skillsetId = skillsetIdDto.getSkillId();
+                for (var skillsetIdDto : talentRequest.getSkillsetIds()) {
+                    UUID skillsetId = skillsetIdDto.getSkillsetId();
                     TalentSkillsetId talentSkillsetId = new TalentSkillsetId(talentId, skillsetId);
                     TalentSkillset talentSkillset = new TalentSkillset();
                     talentSkillset.setId(talentSkillsetId);
                     talentSkillset.setTalent(talent);
-
                     Skillset skillset = skillsetRepository.findById(skillsetId)
                             .orElseThrow(() -> new IllegalArgumentException("Invalid Skillset ID"));
-
                     talentSkillset.setSkillset(skillset);
-
                     talentSkillsets.add(talentSkillset);
                 }
-                // Set skillsets to talent
+                // Set positions to talent
                 talent.getTalentSkillsets().addAll(talentSkillsets);
             }
 
