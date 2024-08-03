@@ -1,6 +1,5 @@
 package com.tujuhsembilan.app.model.client;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;

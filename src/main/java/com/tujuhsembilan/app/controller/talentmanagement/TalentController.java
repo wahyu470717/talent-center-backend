@@ -23,7 +23,6 @@ import com.tujuhsembilan.app.dto.response.employee_response.EmployeeStatusRespon
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentDetailResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.TalentMessageResponseDto;
-import com.tujuhsembilan.app.dto.response.talent_response.TalentResponse;
 import com.tujuhsembilan.app.service.CreateTalentService;
 import com.tujuhsembilan.app.service.EditTalentService;
 import com.tujuhsembilan.app.service.EmployeeStatusService;

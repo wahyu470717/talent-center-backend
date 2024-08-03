@@ -5,52 +5,55 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.tujuhsembilan.app.dto.request.TalentRequestDto;
+import com.tujuhsembilan.app.dto.request.ApprovalRequestDto;
+import com.tujuhsembilan.app.model.client.Client;
 import com.tujuhsembilan.app.model.talent.Talent;
+import com.tujuhsembilan.app.model.talent.TalentLevel;
+import com.tujuhsembilan.app.model.talent.talent_request.TalentRequest;
+import com.tujuhsembilan.app.model.talent.talent_request.TalentRequestStatus;
+import com.tujuhsembilan.app.model.talent.talent_request.TalentWishlist;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 
 public class ApprovalTalentSpecification {
-    public static Specification<Talent> talentFilter(TalentRequestDto talentRequestDto) {
+    public static Specification<TalentRequest> talentFilter(ApprovalRequestDto approvalRequestDto) {
         return (root, query, criteriaBuilder) -> {
-
-            // Join<Talent, TalentPosition> talentPositionJoin = root.join("talentPositions");
-            // Join<TalentPosition, Position> positionJoin = talentPositionJoin.join("position");
             List<Predicate> predicates = new ArrayList<>();
 
-            if (talentRequestDto.getTalentName() != null) {
-                String talentNameValue = "%" + talentRequestDto.getTalentName().toLowerCase() + "%";
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("talentName")), talentNameValue));
+
+            // Filter berdasarkan status
+            if (approvalRequestDto.getStatus() != null && !approvalRequestDto.getStatus().isEmpty()) {
+                Join<TalentRequest, TalentRequestStatus> statusJoin = root.join("talentRequestStatus");
+                predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(statusJoin.get("talentRequestStatusName")),
+                    "%" + approvalRequestDto.getStatus().toLowerCase() + "%"));
             }
 
-            if (talentRequestDto.getTalentStatusId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("talentStatus"), talentRequestDto.getTalentStatusId()));
+            // Filter berdasarkan nama talent dengan substring
+            if (approvalRequestDto.getTalent() != null && !approvalRequestDto.getTalent().isEmpty()) {
+                Join<TalentRequest, TalentWishlist> wishlistJoin = root.join("talentWishlist");
+                Join<TalentWishlist, Talent> talentJoin = wishlistJoin.join("talent");
+                predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(talentJoin.get("talentName")),
+                    "%" + approvalRequestDto.getTalent().toLowerCase() + "%"));
             }
 
-            if (talentRequestDto.getEmployeeStatusId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("employeeStatus"), talentRequestDto.getEmployeeStatusId()));
+            // Filter berdasarkan instansi (atau relasi dengan entitas lain jika perlu)
+            if (approvalRequestDto.getInstansi() != null && !approvalRequestDto.getInstansi().isEmpty()) {
+                Join<TalentRequest, TalentWishlist> wishlistJoin = root.join("talentWishlist");
+                Join<TalentWishlist, Client> clientJoin = wishlistJoin.join("client");
+                predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(clientJoin.get("agencyName")),
+                    "%" + approvalRequestDto.getInstansi().toLowerCase() + "%"));
             }
 
-            if (talentRequestDto.getTalentAvailability() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("talentAvailability"), talentRequestDto.getTalentAvailability()));
+            // Filter berdasarkan tanggal request
+            if (approvalRequestDto.getDateRequest() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("dateRequest"), approvalRequestDto.getDateRequest()));
             }
 
-            if (talentRequestDto.getTalentExperience() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("experience"), talentRequestDto.getTalentExperience()));
-            }
-
-            if (talentRequestDto.getTalentLevelId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("talentLevel"), talentRequestDto.getTalentLevelId()));
-            }
-
-            // if (talentRequestDto.getPositionIds() != null) {
-            //     predicates.add(criteriaBuilder.equal(root.get("position"), talentRequestDto.getPositionIds()));
-            // }
-
-            // if (talentRequestDto.getSkillSetIds() != null) {
-            //     predicates.add(criteriaBuilder.equal(root.get("skillSet"), talentRequestDto.getSkillSetIds()));
-            // }
-
+            // Kembalikan hasil filter sebagai Predicate
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
