@@ -1,5 +1,6 @@
 package com.tujuhsembilan.app.service.specifications;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +50,17 @@ public class ApprovalTalentSpecification {
             }
 
             // Filter berdasarkan tanggal request
-            if (approvalRequestDto.getDateRequest() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("dateRequest"), approvalRequestDto.getDateRequest()));
+            if (approvalRequestDto.getRequestDate() != null) {
+                String dateRequest = approvalRequestDto.getRequestDate();
+
+                predicates.add(criteriaBuilder.equal(
+                    criteriaBuilder.function("TO_CHAR", String.class,
+                        root.get("requestDate"),
+                        criteriaBuilder.literal("YYYY-MM-DD")),
+                    criteriaBuilder.literal(dateRequest.toString().substring(0, 10))
+                ));
             }
+
 
             // Kembalikan hasil filter sebagai Predicate
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
