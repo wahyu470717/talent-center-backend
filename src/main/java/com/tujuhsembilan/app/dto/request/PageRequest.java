@@ -61,6 +61,9 @@ public class PageRequest {
                     case "talentName":
                         sort = Sort.by(Sort.Direction.fromString(sortOrder), "talentWishlist.talent.talentName");
                         break;
+                    case "agencyName":
+                        sort = Sort.by(Sort.Direction.fromString(sortOrder), "talentWishlist.client.agencyName");
+                        break;
                     case "requestDate":
                         sort = Sort.by(Sort.Direction.fromString(sortOrder), "requestDate");
                         break;

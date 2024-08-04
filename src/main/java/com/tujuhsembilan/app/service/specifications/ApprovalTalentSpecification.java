@@ -37,7 +37,7 @@ public class ApprovalTalentSpecification {
                     "%" + approvalRequestDto.getTalent().toLowerCase() + "%"));
             }
 
-            // Filter berdasarkan instansi (atau relasi dengan entitas lain jika perlu)
+            // Filter berdasarkan instansi (atau relasi dengan entitas lain jika perlu
             if (approvalRequestDto.getInstansi() != null && !approvalRequestDto.getInstansi().isEmpty()) {
                 Join<TalentRequest, TalentWishlist> wishlistJoin = root.join("talentWishlist");
                 Join<TalentWishlist, Client> clientJoin = wishlistJoin.join("client");
