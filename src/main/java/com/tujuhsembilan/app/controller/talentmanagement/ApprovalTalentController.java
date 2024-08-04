@@ -16,6 +16,7 @@ import com.tujuhsembilan.app.dto.request.ApprovalRequestDto;
 import com.tujuhsembilan.app.dto.request.Approve_RejectDto;
 import com.tujuhsembilan.app.dto.request.PageRequest;
 import com.tujuhsembilan.app.dto.response.approval_talent_response.ApprovalTalentResponse;
+import com.tujuhsembilan.app.dto.response.approval_talent_response.MessageApprovalResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.service.talent_approval.ApproveOrRejectTalentService;
 import com.tujuhsembilan.app.service.talent_approval.GetApprovalTalentService;
@@ -36,7 +37,7 @@ public class ApprovalTalentController {
 
     // GET_ALL_TALENTS_APPROVAL
     @GetMapping("/talent-approvals")
-    public ResponseEntity<List<ApprovalTalentResponse>> getTalentApproval(
+    public ResponseEntity<MessageApprovalResponse> getTalentApproval(
             @ModelAttribute ApprovalRequestDto filter,
             PageRequest pageRequest) {
         return getApprovalTalentService.getAllApprovalTalent(filter, pageRequest);

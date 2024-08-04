@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tujuhsembilan.app.dto.request.ApprovalRequestDto;
 import com.tujuhsembilan.app.dto.request.PageRequest;
 import com.tujuhsembilan.app.dto.response.approval_talent_response.ApprovalTalentResponse;
+import com.tujuhsembilan.app.dto.response.approval_talent_response.MessageApprovalResponse;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentRequest;
 import com.tujuhsembilan.app.repository.approval_talent_repo.TalentRequestRepository;
 import com.tujuhsembilan.app.service.specifications.ApprovalTalentSpecification;
@@ -24,8 +25,8 @@ public class GetApprovalTalentService {
     @Autowired
     private TalentRequestRepository talentRequestRepository;
 
-    public ResponseEntity<List<ApprovalTalentResponse>> getAllApprovalTalent(ApprovalRequestDto filter,
-        PageRequest pageRequest) {
+    public ResponseEntity<MessageApprovalResponse> getAllApprovalTalent(ApprovalRequestDto filter,
+            PageRequest pageRequest) {
 
         try {
             Pageable pageable = pageRequest.getPageApproval();
@@ -42,8 +43,19 @@ public class GetApprovalTalentService {
                 return response;
             }).collect(Collectors.toList());
 
-            return ResponseEntity.ok(approvalTalentResponses);
+            // Create the MessageApprovalResponse
+            MessageApprovalResponse messageResponse = MessageApprovalResponse.builder()
+                    .data(approvalTalentResponses)
+                    .total(talentApprovalPage.getTotalElements())
+                    .message("Success")
+                    .statusCode(200)
+                    .status("OK")
+                    .build();
+
+            return ResponseEntity.ok(messageResponse);
         } catch (Exception e) {
+            // Log the exception for debugging
+            e.printStackTrace();
             return ResponseEntity.status(500).body(null);
         }
     }
