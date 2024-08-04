@@ -1,6 +1,5 @@
 package com.tujuhsembilan.app.service.specifications;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 import com.tujuhsembilan.app.dto.request.ApprovalRequestDto;
 import com.tujuhsembilan.app.model.client.Client;
 import com.tujuhsembilan.app.model.talent.Talent;
-import com.tujuhsembilan.app.model.talent.TalentLevel;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentRequest;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentRequestStatus;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentWishlist;
@@ -21,7 +19,6 @@ public class ApprovalTalentSpecification {
     public static Specification<TalentRequest> talentFilter(ApprovalRequestDto approvalRequestDto) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
 
             // Filter berdasarkan status
             if (approvalRequestDto.getStatus() != null && !approvalRequestDto.getStatus().isEmpty()) {
@@ -52,7 +49,6 @@ public class ApprovalTalentSpecification {
             // Filter berdasarkan tanggal request
             if (approvalRequestDto.getRequestDate() != null) {
                 String dateRequest = approvalRequestDto.getRequestDate();
-
                 predicates.add(criteriaBuilder.equal(
                     criteriaBuilder.function("TO_CHAR", String.class,
                         root.get("requestDate"),
@@ -60,7 +56,6 @@ public class ApprovalTalentSpecification {
                     criteriaBuilder.literal(dateRequest.toString().substring(0, 10))
                 ));
             }
-
 
             // Kembalikan hasil filter sebagai Predicate
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

@@ -48,13 +48,27 @@ public class PageRequest {
         int pageNumberValue = (pageNumber != null) ? pageNumber < 1 ? 1 : pageNumber : 1;
         int pageSizeValue = (pageSize != null) ? pageSize < 1 ? 1 : pageSize : 10;
 
-        Sort sort = Sort.by(Direction.DESC, "requestDate");
+        Sort sort = Sort.by(Direction.DESC, "requestDate"); // Default sort
 
         if (sortBy != null) {
             String[] parts = sortBy.split(",");
-            String sortField = parts[0];
-            String sortOrder = parts.length > 1 ? parts[1] : "ASC";
-            sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
+            if (parts.length == 2) {
+                String sortField = parts[0];
+                String sortOrder = parts[1];
+
+                // Check if the sortField is valid
+                switch (sortField) {
+                    case "talentName":
+                        sort = Sort.by(Sort.Direction.fromString(sortOrder), "talentWishlist.talent.talentName");
+                        break;
+                    case "requestDate":
+                        sort = Sort.by(Sort.Direction.fromString(sortOrder), "requestDate");
+                        break;
+                    default:
+                        sort = Sort.by(Direction.DESC, "requestDate"); // Default sorting
+                        break;
+                }
+            }
         }
 
         return org.springframework.data.domain.PageRequest.of(pageNumberValue - 1, pageSizeValue, sort);
