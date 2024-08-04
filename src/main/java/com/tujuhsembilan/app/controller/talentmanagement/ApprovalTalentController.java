@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tujuhsembilan.app.dto.request.ApprovalRequestDto;
 import com.tujuhsembilan.app.dto.request.Approve_RejectDto;
 import com.tujuhsembilan.app.dto.request.PageRequest;
-import com.tujuhsembilan.app.dto.response.approval_talent_response.ApprovalTalentResponse;
 import com.tujuhsembilan.app.dto.response.approval_talent_response.MessageApprovalResponse;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.service.talent_approval.ApproveOrRejectTalentService;
