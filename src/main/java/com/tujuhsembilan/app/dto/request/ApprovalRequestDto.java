@@ -14,4 +14,5 @@ public class ApprovalRequestDto {
   private String instansi;
   private String talent;
   private String requestDate;
+  private String search;
 }

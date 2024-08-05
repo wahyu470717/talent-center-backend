@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tujuhsembilan.app.dto.request.Approve_RejectDto;
 import com.tujuhsembilan.app.dto.response.talent_response.MessageResponse;
 import com.tujuhsembilan.app.model.talent.talent_request.TalentRequest;
+import com.tujuhsembilan.app.model.talent.talent_request.TalentRequestStatus;
 import com.tujuhsembilan.app.repository.approval_talent_repo.TalentRequestRepository;
+import com.tujuhsembilan.app.repository.approval_talent_repo.TalentRequestStatusRepository;
 
 @Service
 @Transactional
@@ -18,34 +20,47 @@ public class ApproveOrRejectTalentService {
   @Autowired
   private TalentRequestRepository talentRequestRepository;
 
+  @Autowired
+  private TalentRequestStatusRepository talentRequestStatusRepository;
+
   public ResponseEntity<MessageResponse> approveTalentStatus(Approve_RejectDto request) {
     try {
       TalentRequest talentRequest = talentRequestRepository.findById(request.getTalentRequestId()).orElse(null);
       if (talentRequest == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new MessageResponse(0,"Talent request not found", HttpStatus.NOT_FOUND.value(), "FAILED"));
+            .body(new MessageResponse(0, "Talent request not found", HttpStatus.NOT_FOUND.value(), "FAILED"));
       }
 
-      // Assuming 'action' field is used to determine approval
+      String statusName;
       if ("approve".equalsIgnoreCase(request.getAction())) {
-        talentRequest.getTalentRequestStatus().setTalentRequestStatusName("Approved");
+        statusName = "Approved";
         talentRequest.setRequestRejectReason(null);
-        talentRequestRepository.save(talentRequest);
-        return ResponseEntity.ok(new MessageResponse(0,"Talent approved successfully", HttpStatus.OK.value(), "SUCCESS"));
       } else if ("reject".equalsIgnoreCase(request.getAction())) {
-        talentRequest.getTalentRequestStatus().setTalentRequestStatusName("Rejected");
+        statusName = "Rejected";
         talentRequest.setRequestRejectReason(request.getRejectReason());
-        talentRequestRepository.save(talentRequest);
-        return ResponseEntity.ok(new MessageResponse(0,"Talent rejected successfully", HttpStatus.OK.value(), "SUCCESS"));
       } else {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new MessageResponse(0,"Invalid action", HttpStatus.BAD_REQUEST.value(), "FAILED"));
+            .body(new MessageResponse(0, "Invalid action", HttpStatus.BAD_REQUEST.value(), "FAILED"));
       }
+
+      // Get active status
+      TalentRequestStatus status = talentRequestStatusRepository.findByTalentRequestStatusNameAndIsActive(statusName, true)
+          .orElse(null);
+
+      if (status == null) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new MessageResponse(0, "Active status not found", HttpStatus.INTERNAL_SERVER_ERROR.value(), "FAILED"));
+      }
+
+      talentRequest.setTalentRequestStatus(status);
+      talentRequestRepository.save(talentRequest);
+      return ResponseEntity.ok(new MessageResponse(0, "Talent status updated successfully", HttpStatus.OK.value(), "SUCCESS"));
+
     } catch (Exception e) {
+      // Log the full stack trace for debugging
+      e.printStackTrace(); 
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new MessageResponse(0,"Error processing talent request", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-              "FAILED"));
+          .body(new MessageResponse(0, "Error processing talent request", HttpStatus.INTERNAL_SERVER_ERROR.value(), "FAILED"));
     }
   }
-
 }
