@@ -203,8 +203,7 @@ public class TalentService<NotFoundResponse> {
                 talentDetailResponse.setEmail(talent.getEmail());
                 talentDetailResponse.setCellphone(talent.getCellphone());
                 talentDetailResponse.setEmployeeStatus(
-                                talentDetailResponse.getEmployeeStatus() != null
-                                                ? talent.getEmployeeStatus().getEmployeeStatusName()
+                                talent.getEmployeeStatus() != null ? talent.getEmployeeStatus().getEmployeeStatusName()
                                                 : null);
                 talentDetailResponse.setTalentAvailability(talent.getTalentAvailability());
 
